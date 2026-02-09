@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ErrorSchema = new mongoose.Schema({
+const ExpenseSchema = new mongoose.Schema({
     amount: {type: Number, required: true},
     note: {type: String},
     date: {type: Date, required: true},
@@ -8,7 +8,7 @@ const ErrorSchema = new mongoose.Schema({
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true},
 },{timestamps: true}); 
 
-export const ExpenseModel = mongoose.model('Expenses', ErrorSchema);
+export const ExpenseModel = mongoose.model('Expenses', ExpenseSchema);
 
 export const getExpensesByUserId = (userId: string) => ExpenseModel.find({user: userId}); 
 export const createExpense = (values: Record<string, any>) => new ExpenseModel(values).save().then((expense) => expense.toObject());
