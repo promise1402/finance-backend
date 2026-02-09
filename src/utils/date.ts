@@ -1,53 +1,67 @@
-export type RangeType = 'daily' | 'monthly' | 'yearly';
+export type RangeType = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
-export const getDateRange = (
-  date: Date,
-  rangeType: RangeType
-): { start: Date; end: Date } => {
-  const start = new Date(date);
-  const end = new Date(date);
+export const getDayRange = (baseDate: Date = new Date()) => {
+  const start = new Date(baseDate);
+  start.setHours(0, 0, 0, 0);
 
-  switch (rangeType) {
-    case 'daily':
-      start.setHours(0, 0, 0, 0);
-      end.setHours(23, 59, 59, 999);
-      break;
-
-    case 'monthly':
-      start.setDate(1);
-      start.setHours(0, 0, 0, 0);
-
-      end.setMonth(start.getMonth() + 1, 0);
-      end.setHours(23, 59, 59, 999);
-      break;
-
-    case 'yearly':
-      start.setMonth(0, 1);
-      start.setHours(0, 0, 0, 0);
-
-      end.setMonth(11, 31);
-      end.setHours(23, 59, 59, 999);
-      break;
-  }
+  const end = new Date(baseDate);
+  end.setHours(23, 59, 59, 999);
 
   return { start, end };
 };
 
-export const formatDate = (date: Date): string => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+export const getWeekRange = (baseDate: Date = new Date()) => {
+  const start = new Date(baseDate);
+  const end = new Date(baseDate);
+
+  const day = start.getDay();
+  const diff = day === 0 ? -6 : 1 - day; // Monday as first day
+
+  start.setDate(start.getDate() + diff);
+  start.setHours(0, 0, 0, 0);
+
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+
+  return { start, end };
 };
 
-export const parseDate = (dateString: string): Date | null => {
-  const date = new Date(dateString);
-  return isNaN(date.getTime()) ? null : date;
+export const getMonthRange = (baseDate: Date = new Date()) => {
+  const start = new Date(baseDate);
+  start.setDate(1);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(start);
+  end.setMonth(end.getMonth() + 1, 0);
+  end.setHours(23, 59, 59, 999);
+
+  return { start, end };
 };
 
-export const formatTime = (date: Date): string => {
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
-  return `${hours}:${minutes}:${seconds}`;
+export const getYearRange = (baseDate: Date = new Date()) => {
+  const start = new Date(baseDate.getFullYear(), 0, 1);
+  start.setHours(0, 0, 0, 0);
+
+  const end = new Date(baseDate.getFullYear(), 11, 31);
+  end.setHours(23, 59, 59, 999);
+
+  return { start, end };
+};
+
+export const getDateRange = (
+  range: RangeType,
+  baseDate: Date = new Date()
+) => {
+  switch (range) {
+    case 'daily':
+      return getDayRange(baseDate);
+    case 'weekly':
+      return getWeekRange(baseDate);
+    case 'monthly':
+      return getMonthRange(baseDate);
+    case 'yearly':
+      return getYearRange(baseDate);
+    default:
+      return getDayRange(baseDate);
+  }
 };
