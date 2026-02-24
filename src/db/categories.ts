@@ -4,6 +4,7 @@ const CategorySchema = new mongoose.Schema({
     name: {type: String, required: true},
     user: {type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true},
     budget: {type: Number, default: null, min: 0},
+    color: { type: String, default: '#6366f1' }
 },{timestamps: true});
 
 export const CategoryModel = mongoose.model('Categories', CategorySchema);
