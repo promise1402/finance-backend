@@ -29,7 +29,7 @@ export const getCategories = async (req: AuthenticatedRequest, res: express.Resp
 export const createCategory = async (req: AuthenticatedRequest, res: express.Response) => {
     try {
         const userId = req.user._id;
-        const { name, budget } = req.body;
+        const { name, budget, color } = req.body;
 
         if (!name) {
             return res.status(400).json({ message: 'Category name is required' });
@@ -40,7 +40,7 @@ export const createCategory = async (req: AuthenticatedRequest, res: express.Res
             return res.status(409).json({ message: 'Category with this name already exists' });
         }
 
-        const category = await createCategoryInDb({ name, user: userId, budget: budget ?? null });
+        const category = await createCategoryInDb({ name, user: userId, budget: budget ?? null, color: color ?? '#6366f1' });
         return res.status(201).json({ message: 'Category created successfully', category });
     } catch (error) {
         console.error('Error in Create Category controller:', error);
@@ -51,7 +51,8 @@ export const createCategory = async (req: AuthenticatedRequest, res: express.Res
 export const updateCategory = async (req: AuthenticatedRequest, res: express.Response) => {
     try {
         const { id } = req.params;
-        const { name, budget } = req.body;
+        const { name, budget, color } = req.body;
+        const updateData: Record<string, any> = { };
 
         if (name !== undefined && !name) {
             return res.status(400).json({ message: 'Category name is required' });
@@ -63,16 +64,18 @@ export const updateCategory = async (req: AuthenticatedRequest, res: express.Res
             }
         }
 
+        if(color !== undefined) {
+            updateData.color = color;
+        }
+
         if (!id || Array.isArray(id)) {
             return res.status(400).json({ message: 'Invalid category id' });
         }
 
-        const updateData: Record<string, any> = { };
-
         //Check Duplicate Category Name
         if(name !== undefined) {
             const existingCategory = await getCategoryByNameAndUser(name, req.user._id);
-            if (existingCategory) {
+            if (existingCategory && existingCategory._id.toString() !== id) {
                 return res.status(409).json({ message: 'Category with this name already exists' });
             }
             updateData.name = name;
