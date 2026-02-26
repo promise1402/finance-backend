@@ -1,5 +1,5 @@
 import express from 'express';
-import { get, merge } from 'lodash';
+import { get } from 'lodash';
 
 import { getUserBySessionToken } from '../db/users';
 
@@ -34,9 +34,12 @@ export const isAuthenticated = async (req: express.Request, res: express.Respons
             return res.status(401).json({ message: 'Unauthorized: Invalid session token' });
         }
 
-        merge(req, { user: existingUser.toObject() });
+        (req as any).user = {
+            ...existingUser.toObject(),
+            _id: existingUser._id.toString(),
+        };
+
         return next();
-        
     } catch (error) {
         console.error('Error in isAuthenticated middleware:', error);
         return res.status(500).json({ message: 'Internal server error' });
