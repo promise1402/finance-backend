@@ -13,8 +13,12 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: [
+        'http://localhost:5173',
+        'https://finance-frontend-gilt.vercel.app'
+    ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 }));
 
 app.use(compression())
@@ -29,9 +33,9 @@ server.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-const MONGO_URI=process.env.MONGO_URI || 'mongodb://localhost:27017/finance-manager';
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/finance-manager';
 
-if(!MONGO_URI) {
+if (!MONGO_URI) {
     console.error('MONGO_URI is not defined in environment variables');
     process.exit(1);
 }
@@ -46,4 +50,3 @@ mongoose.connect(MONGO_URI)
     });
 
 app.use('/', router());
-    
