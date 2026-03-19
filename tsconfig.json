@@ -5,7 +5,12 @@
         "baseUrl": "src",
         "outDir": "dist",
         "sourceMap": true,
-        "noImplicitAny": true
+        "noImplicitAny": false,
+        "types": [
+            "node"
+        ]
     },
-    "include": ["src/**/*"]
+    "include": [
+        "src/**/*"
+    ]
 }
