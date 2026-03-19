@@ -29,7 +29,12 @@ export const login = async (req: express.Request, res: express.Response) => {
 
         await user.save();
 
-        res.cookie('PROMISE_AUTH', sessionToken, { domain: 'localhost', path: '/' });
+        res.cookie('PROMISE_AUTH', sessionToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            path: '/',
+        });
 
         return res.status(200).json({ message: 'Login successful', user });
     } catch (error) {
