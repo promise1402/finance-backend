@@ -53,4 +53,6 @@ mongoose.connect(MONGO_URI)
         console.error('Error connecting to MongoDB', err);
     });
 
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
+
 app.use('/', router());
